@@ -9,43 +9,67 @@ server.get('/', function(request, response){
 });
 
 server.get('/version/:project/new', function(request, response) {
-  debugger;
   var newVersion = branch;
   var project = request.params.project;
   var path = 'repository/' + project;
+  fs.exists(path, function(exists) {
+    if (exists == false) {
+      response.send('Project ' + project + ' not exists');  
+    } else {
+      fs.readdir(path, function(err, files){ 
+        if (err) {
+          throw err;
+        }
 
+        if (files.length > 0) { 
+          var last = files.pop();
+          var ver = last.split('.');
 
-  try {
-    fs.exists(path, function(exists) {
-      if (exists == false) {
-        response.send('Projects ' + project +' not exists');
-      } else {
-        fs.readdir(path, function(err, files){ 
-          if (files.count > 0) { 
-            var ver = files.pop();
-            var nver = ver.split('.');
-            newVersion = branch + '.' + (parseInt(nver[2]) + 1);
+          if (ver[1] != branch) {
+            version = branch + '.01';
           } else {
-            newVersion = branch + '.01';
+            var newTag = parseInt(ver[2]) + 1;
+            if (newTag < 10) {
+              newTag = '0' + newTag;
+            }
+            version = ver[1] + '.' + newTag;
           }
-          response.send(newVersion);
-        }); 
-      }
-
-    });
-
-  } catch(err) {
-    response.send("Some  errors occurred " . err);
+          response.send(version);
+        } else {
+          response.send(branch + '.01');
+        } 
+      });
+    }
+  });
   
-  }
 });
 
-server.get('/version/:project/', function(request, response) {
-  debugger;
-  response.send("3.19");
+server.get('/version/:project', function(request, response) {
+  var project = request.params.project;
+  var path = 'repository/' + project;
+  fs.exists(path, function(exists) {
+    if (exists == false) {
+      response.send('Project ' + project + ' not exists');  
+    } else {
+      fs.readdir(path, function(err, files){ 
+        if (err) {
+          throw err;
+        }
+
+        if (files.length > 0) { 
+          var last = files.pop();
+          var ver = last.split('.');
+          version = ver[1] + '.' + ver[2];
+          response.send(version);
+        } else {
+          response.send(branch + '.01');
+        } 
+      });
+    }
+  });
 });
 
-server.post('/deploy/:project/', function( request, response) {
+server.post('/deploy/:project', function( request, response) {
 });
 
 server.listen(3000);
