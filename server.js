@@ -1,3 +1,6 @@
+/**
+ * @author Pablo Morales
+ */
 var express = require('express');
 var server = express();
 var fs = require("fs");
