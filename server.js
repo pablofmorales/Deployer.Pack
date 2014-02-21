@@ -1,8 +1,9 @@
-var express = require('express');
-var server = express();
-var fs = require("fs");
+var express = require('express'),
+  server = express(),
+  fs = require("fs");
+  http = require('http');
 
-var branch = 4;
+var branch = '01.01';
 
 server.get('/', function(request, response){
   response.send('Deployer ');
@@ -69,7 +70,28 @@ server.get('/version/:project', function(request, response) {
   });
 });
 
-server.post('/deploy/:project', function( request, response) {
+server.post('/deploy/:project/:version', function(request, response) {
+  // Get The File
+  // unzip the project
+  // sync the project with the server
+  
+  var project = request.params.project;
+  var version = request.params.version;
+  var path = 'repository/' + project + '.' + version + '.tar.gz';
+  
+  fs.exists(path, function (exists) {
+    var artifactory = fs.statSync(path);
+
+    response.writeHead(200, {
+      'Content-Type': 'audio/mpeg',
+      'Content-Length': file.size
+    });
+
+
+  });
+  var readStream = fs.createReadStream(path);
+  readStream.pipe(response);
+
 });
 
 server.listen(3000);
