@@ -5,10 +5,6 @@ var express = require('express'),
 
 var branch = '01.01';
 
-server.get('/', function(request, response){
-  response.send('Deployer ');
-});
-
 server.get('/version/:project/new', function(request, response) {
   var newVersion = branch;
   var project = request.params.project;
@@ -19,7 +15,7 @@ server.get('/version/:project/new', function(request, response) {
     } else {
       fs.readdir(path, function(err, files){ 
         if (err) {
-          throw err;
+          response.send("Some error");
         }
 
         if (files.length > 0) { 
