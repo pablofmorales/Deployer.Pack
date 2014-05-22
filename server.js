@@ -5,14 +5,14 @@ var server = express(),
 
 var http = require('http');
 
-var branch = '01.01';
+var revision = '01.01';
 
 server.get('/', function(request, response){
   response.send('Deployer ');
 });
 
 server.get('/version/:project/new', function(request, response) {
-  var newVersion = branch;
+  var newVersion = revision;
   var project = request.params.project;
   var path = 'repository/' + project;
   fs.exists(path, function(exists) {
@@ -29,8 +29,8 @@ server.get('/version/:project/new', function(request, response) {
           var ver = last.split('.');
 
           console.log(ver[1] + '.' + ver[2]);
-          if (ver[1] + '.' + ver[2] != branch) {
-            version = branch + '.01';
+          if (ver[1] + '.' + ver[2] != revision) {
+            version = revision + '.01';
           } else {
             var newTag = parseInt(ver[3]) + 1;
             if (newTag < 10) {
@@ -40,7 +40,7 @@ server.get('/version/:project/new', function(request, response) {
           }
           response.send(version);
         } else {
-          response.send(branch + '.01');
+          response.send(revision + '.01');
         } 
       });
     }
@@ -66,13 +66,17 @@ server.get('/version/:project', function(request, response) {
           version = ver[1] + '.' + ver[2] + '.' + ver[3];
           response.send(version);
         } else {
-          response.send(branch + '.01');
+          response.send(revision + '.01');
         } 
       });
     }
   });
 });
 
+
+server.get('/revision/latest', function(request, response) {
+    response.send(revision);
+});
 server.get('/artifactory/:project/:version', function(request, response) {
   
   var project = request.params.project;
