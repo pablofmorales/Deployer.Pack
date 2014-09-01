@@ -5,7 +5,28 @@ var server = express(),
 
 var http = require('http');
 
-var revision = '01.01';
+var revision = '01.09';
+
+var getLatestVersion = function(files) {
+    var latestVersion = [0, 0, 0];
+    var latestVersionIndex = 0;
+
+    for (var i = 0; i < files.length; i++) {
+        var version = files[i].split('.').slice(-3).map(Number);
+        for (j = 0; j < version.length; j++) {
+            if (version[j] > latestVersion[j]) {
+                latestVersion = version;
+                latestVersionIndex = i;
+                break;
+            }
+            if (version[j] < latestVersion[j]) {
+                break;
+            }
+        }
+    }
+
+    return files[latestVersionIndex];
+};
 
 server.get('/', function(request, response){
   response.send('Deployer ');
@@ -25,7 +46,7 @@ server.get('/version/:project/new', function(request, response) {
         }
 
         if (files.length > 0) { 
-          var last = files.pop();
+          var last = getLatestVersion(files);
           var ver = last.split('.');
 
           console.log(ver[1] + '.' + ver[2]);
@@ -61,7 +82,7 @@ server.get('/version/:project', function(request, response) {
         }
 
         if (files.length > 0) { 
-          var last = files.pop();
+          var last = getLatestVersion(files);
           var ver = last.split('.');
           version = ver[1] + '.' + ver[2] + '.' + ver[3];
           response.send(version);
