@@ -10,9 +10,10 @@ var revision = '01.09';
 var getLatestVersion = function(files) {
     var latestVersion = [0, 0, 0];
     var latestVersionIndex = 0;
+    var tarGzLen = '.tar.gz'.length;
 
     for (var i = 0; i < files.length; i++) {
-        var version = files[i].split('.').slice(-3).map(Number);
+        var version = files[i].slice(0, -tarGzLen).split('.').slice(-3).map(Number);
         for (j = 0; j < version.length; j++) {
             if (version[j] > latestVersion[j]) {
                 latestVersion = version;
@@ -49,7 +50,6 @@ server.get('/version/:project/new', function(request, response) {
           var last = getLatestVersion(files);
           var ver = last.split('.');
 
-          console.log(ver[1] + '.' + ver[2]);
           if (ver[1] + '.' + ver[2] != revision) {
             version = revision + '.01';
           } else {
