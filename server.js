@@ -8,25 +8,25 @@ var http = require('http');
 var revision = '01.09';
 
 var getLatestVersion = function(files) {
-    var latestVersion = [0, 0, 0];
-    var latestVersionIndex = 0;
-    var tarGzLen = '.tar.gz'.length;
+  var latestVersion = [0, 0, 0];
+  var latestVersionIndex = 0;
+  var tarGzLen = '.tar.gz'.length;
 
-    for (var i = 0; i < files.length; i++) {
-        var version = files[i].slice(0, -tarGzLen).split('.').slice(-3).map(Number);
-        for (j = 0; j < version.length; j++) {
-            if (version[j] > latestVersion[j]) {
-                latestVersion = version;
-                latestVersionIndex = i;
-                break;
-            }
-            if (version[j] < latestVersion[j]) {
-                break;
-            }
-        }
+  for (var i = 0; i < files.length; i++) {
+    var version = files[i].slice(0, -tarGzLen).split('.').slice(-3).map(Number);
+    for (j = 0; j < version.length; j++) {
+      if (version[j] > latestVersion[j]) {
+        latestVersion = version;
+        latestVersionIndex = i;
+        break;
+      }
+      if (version[j] < latestVersion[j]) {
+        break;
     }
+    }
+  }
 
-    return files[latestVersionIndex];
+  return files[latestVersionIndex];
 };
 
 server.get('/', function(request, response){
